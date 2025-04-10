@@ -13,7 +13,7 @@ class Board:
         self.ships = []
 
     def place_ship(self, ship_size, x, y, direction):
-        """Размещаем корабль на поле."""
+        """Place a ship on the board."""
         if direction == 'H': 
             for i in range(ship_size):
                 self.board[y][x + i] = SHIP
@@ -23,7 +23,7 @@ class Board:
         self.ships.append((ship_size, x, y, direction))
 
     def print_board(self, show_ships=False):
-        """Выводим поле на экран."""
+        """Display the board."""
         print("  " + " ".join([str(i) for i in range(SIZE)]))
         for y in range(SIZE):
             row = str(y) + " "
@@ -35,14 +35,14 @@ class Board:
             print(row)
 
     def is_game_over(self):
-        """Проверяем, остались ли корабли на поле."""
+        """Check if there are any ships left on the board."""
         for row in self.board:
             if SHIP in row:
                 return False
         return True
 
     def make_move(self, x, y):
-        """Делаем ход, проверяя попадание в корабль."""
+        """Make a move, checking if it hits a ship."""
         if self.board[y][x] == SHIP:
             self.board[y][x] = HIT
             return True
@@ -58,7 +58,7 @@ class Game:
         self.computer_visible_board = Board()
 
     def place_computer_ships(self):
-        """Размещаем корабли компьютера случайным образом."""
+        """Place computer's ships randomly."""
         ships = [3, 2, 2, 1, 1]  
         for ship_size in ships:
             placed = False
@@ -84,29 +84,29 @@ class Game:
                         self.computer_board.place_ship(ship_size, x, y, direction)
 
     def place_player_ships(self):
-        """Пользователь размещает свои корабли вручную."""
+        """Player places their ships manually."""
         ships = [3, 2, 2, 1, 1]
         for ship_size in ships:
             placed = False
             while not placed:
-                print(f"Размещение корабля размером {ship_size}")
+                print(f"Placing a ship of size {ship_size}")
                 self.player_board.print_board(show_ships=True)
                 x, y, direction = self.get_player_input()
                 if self.is_valid_move(x, y, direction, ship_size, self.player_board):
                     self.player_board.place_ship(ship_size, x, y, direction)
                     placed = True
                 else:
-                    print("Некорректный ход, попробуйте снова.")
+                    print("Invalid move, try again.")
 
     def get_player_input(self):
-        """Получаем ввод от игрока."""
-        x = int(input("Введите координату X: "))
-        y = int(input("Введите координату Y: "))
-        direction = input("Введите направление (H - горизонтально, V - вертикально): ").upper()
+        """Get input from the player."""
+        x = int(input("Enter X coordinate: "))
+        y = int(input("Enter Y coordinate: "))
+        direction = input("Enter direction (H - horizontal, V - vertical): ").upper()
         return x, y, direction
 
     def is_valid_move(self, x, y, direction, ship_size, board):
-        """Проверяем, можно ли разместить корабль на данном месте."""
+        """Check if a ship can be placed at this location."""
         if direction == 'H':
             if x + ship_size > SIZE:
                 return False
@@ -122,47 +122,47 @@ class Game:
         return True
 
     def player_turn(self):
-        """Ход игрока."""
-        print("Ход игрока")
+        """Player's turn."""
+        print("Player's turn")
         self.computer_visible_board.print_board(show_ships=False)
         x, y = self.get_player_input_for_attack()
         hit = self.computer_board.make_move(x, y)
         if hit:
-            print("Попадание!")
+            print("Hit!")
         else:
-            print("Мимо!")
+            print("Miss!")
 
     def computer_turn(self):
-        """Ход компьютера."""
-        print("Ход компьютера")
+        """Computer's turn."""
+        print("Computer's turn")
         x = random.randint(0, SIZE - 1)
         y = random.randint(0, SIZE - 1)
-        print(f"Компьютер атакует {x}, {y}")
+        print(f"Computer attacks {x}, {y}")
         hit = self.player_board.make_move(x, y)
         if hit:
-            print("Компьютер попал!")
+            print("Computer hit!")
         else:
-            print("Компьютер промахнулся.")
+            print("Computer missed.")
 
     def get_player_input_for_attack(self):
-        """Получаем координаты для атаки от игрока."""
-        x = int(input("Введите координату X для атаки: "))
-        y = int(input("Введите координату Y для атаки: "))
+        """Get attack coordinates from the player."""
+        x = int(input("Enter X coordinate to attack: "))
+        y = int(input("Enter Y coordinate to attack: "))
         return x, y
 
     def play(self):
-        """Запуск игры."""
+        """Start the game."""
         self.place_computer_ships()
         self.place_player_ships()
 
         while True:
             self.player_turn()
             if self.computer_board.is_game_over():
-                print("Вы выиграли!")
+                print("You won!")
                 break
             self.computer_turn()
             if self.player_board.is_game_over():
-                print("Вы проиграли!")
+                print("You lost!")
                 break
 
 if __name__ == "__main__":
